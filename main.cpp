@@ -2,7 +2,7 @@
 #include "dual.h"
 
 int main(){
-    Dual x(3);
+    Dual x(4);
     Dual y(2);
 
     /*
@@ -22,9 +22,10 @@ int main(){
 
     std::cout << o.getDerivative() << std::endl;
     */
-    Dual f = x*y;
+    Dual temp = pow(x,2); 
+    //Dual f = temp*y;
 
     //std::cout << f << std::endl;
-    std::cout << f.getDerivative() << std::endl;
+    std::cout << temp.getDerivative() << std::endl;
     return 0;
 }

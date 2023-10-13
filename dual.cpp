@@ -23,23 +23,18 @@ double Dual::getDerivative() const{ //This method returns the value of der. The 
     return der;
 }
 
-Dual operator+(const Dual& u, const Dual& v){
+Dual operator+(Dual& u, Dual& v){
     //Overloads the + operator. It returns a new Dual object whose val is the sum of the vals and whose der is the sum of the ders of the two operands.
-    return Dual(u.val+v.val, u.der+v.der);
+    u.setDerivative(1);
+    v.setDerivative(1);
+    return Dual(u.val+v.val);
 }
 
-Dual operator-(const Dual& u, const Dual& v){
-    return Dual(u.val-v.val, u.der-v.der);
-}
-
-Dual operator*(const Dual& u, const Dual& v){
+Dual operator*(Dual& u, Dual& v){
     //Overloads the * operator. The val is the product of the vals, and the der is calculated based on the product rule in calculus.
-    return Dual(u.val*v.val, u.der*v.val+u.val*v.der);
-}
-
-Dual operator/(const Dual& u, const Dual& v){
-    //Overloads the / operator. Both val and der are calculated based on the quotient rule in calculus.
-    return Dual(u.val/v.val, (u.der*v.val-u.val*v.der)/(v.val*v.val));
+    u.setDerivative(v.val);
+    v.setDerivative(u.val);
+    return Dual(u.val*v.val);
 }
 
 std::ostream& operator<<(std::ostream& os, const Dual& a){
@@ -69,5 +64,5 @@ Dual log(Dual d){
 }
 
 Dual pow(Dual d, double p){
-    return Dual(::pow(d.val, p), p*d.der*::pow(d.val, p-1));
+    return Dual(::pow(d.val, p), p*::pow(d.val, p-1));
 }

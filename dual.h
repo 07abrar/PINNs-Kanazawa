@@ -27,12 +27,10 @@ class Dual {
         //The operator keyword is used for operator overloading.
         //For example, friend Dual operator+(...); allows us to define custom behavior for the + operator when used with objects of the Dual class.
 
-        friend Dual operator+(const Dual& u, const Dual& v); 
-        friend Dual operator-(const Dual& u, const Dual& v);
-        friend Dual operator*(const Dual& u, const Dual& v);
-        friend Dual operator/(const Dual& u, const Dual& v);
+        friend Dual operator+(Dual& u, Dual& v); 
+        friend Dual operator*(Dual& u, Dual& v);
 
-        //Declares friend functions for overloading the +, -, *, and / operators for objects of type Dual.
+        //Declares friend functions for overloading the + and * operators for objects of type Dual.
 
         //std::ostream is a stream class to write on files. std::ostream& operator<<(std::ostream& os, const Dual& a); 
         //is overloading the << operator so we can directly use std::cout << dual_object; to print the Dual object.
