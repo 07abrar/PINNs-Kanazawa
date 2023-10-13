@@ -56,6 +56,10 @@ Dual cos(Dual d){
     return Dual(::cos(d.val), -d.der*::sin(d.val));
 }
 
+Dual tanh(Dual d){
+    return Dual(::tanh(d.val), d.der*(1-::tanh(d.val)*::tanh(d.val)));
+}
+
 Dual exp(Dual d){
     return Dual(::exp(d.val), d.der*::exp(d.val));
 }

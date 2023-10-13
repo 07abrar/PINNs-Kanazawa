@@ -40,6 +40,7 @@ class Dual {
 
         friend Dual sin(Dual d);
         friend Dual cos(Dual d);
+        friend Dual tanh(Dual d);
         friend Dual exp(Dual d);
         friend Dual log(Dual d);
         friend Dual abs(Dual d);
