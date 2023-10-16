@@ -59,16 +59,6 @@ Dual operator*(Dual& a, Dual& b) {
     return out;
 }
 
-/*
-Dual tanh(Dual* d) {
-    Dual out(::tanh(d->data), {d});
-    out._backward = [&]() {
-        d->grad += (1-::tanh(d->data)*::tanh(d->data))*out.grad;
-    };
-    return out;
-}
-*/
-
 Dual tanh(Dual& d) {
     Dual out(::tanh(d.data), {&d});
     out._backward = [&]() {
