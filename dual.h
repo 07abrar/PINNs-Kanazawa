@@ -44,4 +44,5 @@ class Dual {
         friend Dual abs(Dual d);
         friend Dual pow(Dual d, double p);
 };
+
 #endif //Closes the #ifndef DUAL preprocessor directive started earlier. This ensures that the code between #ifndef and #endif is included only once.

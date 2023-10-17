@@ -1,0 +1,63 @@
+#include "backprop.h"
+
+Value::Value(double data, std::initializer_list<Value*> children, const std::function<void()> &backward){
+    this->data = data;
+    this->grad = grad;
+    this->prev = children;
+    this->backward = backward;
+}
+
+double Value::getGradient() const{ //This method returns the value of der. The const keyword ensures the method doesn't modify object members.
+    return grad;
+}
+
+void Value::backprop(){
+    std::vector<Value*> topo;
+    std::set<Value*> visited;
+
+    std::function<void(Value*)> build_topo = [&](Value* v) {
+        if (visited.find(v) == visited.end()) {
+            visited.insert(v);
+            for (auto child : v->prev) {
+                build_topo(child);
+            }
+            topo.push_back(v);
+        }
+    };
+
+    build_topo(this);
+
+    // Initialize the grad for the start node
+    this->grad = 1.0;
+
+    // Backpropagation
+    for (auto it = topo.rbegin(); it != topo.rend(); ++it) {
+        (*it)->backward();
+    }
+}
+
+Value operator+(Value& u, Value& v){
+    Value out(u.data+v.data, {&u, &v});
+    out.backward = [&]() {
+        u.grad += 1.0 * out.grad;
+        v.grad += 1.0 * out.grad;
+    };
+    return out;
+}
+
+Value operator*(Value& u, Value& v){
+    Value out(u.data*v.data, {&u, &v});
+    out.backward = [&]() {
+        u.grad += v.data*out.grad;
+        v.grad += u.data*out.grad;
+    };
+    return out;
+}
+
+Value tanh(Value& d) {
+    Value out(::tanh(d.data), {&d});
+    out.backward = [&]() {
+        d.grad += (1-::tanh(d.data)*::tanh(d.data))*out.grad;
+    };
+    return out;
+}
