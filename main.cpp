@@ -1,6 +1,7 @@
 #include<iostream>
 #include "dual.h"
-#include "backprop.h"
+//#include "backprop.h"
+#include "neuralnet.h"
 
 int main() {
     Value x1(2.0);
@@ -19,6 +20,13 @@ int main() {
 
     std::cout << "Gradient with respect to x1: " << x1.getGradient() << std::endl;
     std::cout << "Gradient with respect to w1: " << x2.getGradient() << std::endl;
+
+    int nin = 2;
+    Neuron neuron(nin);
+    std::vector<Value> inputs = {Value(2.0), Value(3.0)};
+    Value output = neuron(inputs);
+    std::cout << "Output: " << output << std::endl;
+    std::cout << "Neuron Parameters: " << neuron << std::endl;
 
     return 0;
 }

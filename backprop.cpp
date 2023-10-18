@@ -1,5 +1,12 @@
 #include "backprop.h"
 
+Value::Value(){
+    this->data = 0.0;
+    this->grad = 0.0;
+    this->prev = {};
+    this->backward = [](){};
+}
+
 Value::Value(double data, std::initializer_list<Value*> children, const std::function<void()> &backward){
     this->data = data;
     this->grad = grad;
@@ -34,6 +41,12 @@ void Value::backprop(){
     for (auto it = topo.rbegin(); it != topo.rend(); ++it) {
         (*it)->backward();
     }
+}
+
+std::ostream& operator<<(std::ostream& os, const Value& a){
+    //Overloads the << operator for std::ostream, allowing you to directly print Dual objects using std::cout.
+    os << a.data;
+    return os;
 }
 
 Value operator+(Value& u, Value& v){
