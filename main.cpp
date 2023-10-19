@@ -28,6 +28,33 @@ int main() {
     std::cout << "Output: " << output << std::endl;
     std::cout << "Neuron Parameters: " << neuron << std::endl;
 
+    int nout = 2;
+    Layer layer(nin, nout);
+    std::vector<Value> layer_output = layer(inputs);
+    std::cout << "Layer Output: ";
+    for (const auto& out : layer_output) {
+        std::cout << out << ' ';
+    }
+    std::cout << std::endl;
+    std::cout << "Layer Parameters: ";
+    for (const auto& param : layer.parameters()) {
+        std::cout << param << ' ';
+    }
+    std::cout << std::endl;
+
+    MLP mlp({2, 3, 1});
+    std::vector<Value> mlp_output = mlp(inputs);
+    std::cout << "MLP Output: ";
+    for (const auto& out : mlp_output) {
+        std::cout << out << ' ';
+    }
+    std::cout << std::endl;
+    std::cout << "MLP Parameters: ";
+    for (const auto& param : mlp.parameters()) {
+        std::cout << param << ' ';
+    }
+    std::cout << std::endl;
+
     return 0;
 }
 /*

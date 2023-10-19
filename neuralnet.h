@@ -17,3 +17,21 @@ class Neuron{
         std::vector<Value> getWeights() const;
         Value getBias() const;
 };
+
+class Layer {
+    private:
+        std::vector<Neuron> neurons;
+    public:
+        Layer(int nin, int nout);
+        std::vector<Value> operator()(const std::vector<Value>& x);
+        std::vector<Value> parameters();
+};
+
+class MLP {
+    private:
+        std::vector<Layer> layers;
+    public:
+        MLP(std::vector<int> sizes);
+        std::vector<Value> operator()(const std::vector<Value>& x);
+        std::vector<Value> parameters();
+};

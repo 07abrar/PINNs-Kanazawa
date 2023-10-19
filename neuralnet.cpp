@@ -56,3 +56,50 @@ std::vector<Value> Neuron::getWeights() const{
 Value Neuron::getBias() const{
     return b;
 }
+
+Layer::Layer(int nin, int nout) {
+    for (int i = 0; i < nout; ++i) {
+        neurons.emplace_back(Neuron(nin));
+    }
+}
+
+std::vector<Value> Layer::operator()(const std::vector<Value>& x) {
+    std::vector<Value> outs;
+    for (auto& neuron : neurons) {
+        outs.push_back(neuron(x));
+    }
+    return outs;
+}
+
+std::vector<Value> Layer::parameters() {
+    std::vector<Value> params;
+    for (auto& neuron : neurons) {
+        // Assuming Neuron has a method parameters() that returns std::vector<Value>
+        auto neuron_params = neuron.parameters();
+        params.insert(params.end(), neuron_params.begin(), neuron_params.end());
+    }
+    return params;
+}
+
+MLP::MLP(std::vector<int> sizes) {
+    for (size_t i = 0; i < sizes.size() - 1; ++i) {
+        layers.emplace_back(Layer(sizes[i], sizes[i + 1]));
+    }
+}
+
+std::vector<Value> MLP::operator()(const std::vector<Value>& x) {
+    std::vector<Value> out = x;
+    for (auto& layer : layers) {
+        out = layer(out);
+    }
+    return out;
+}
+
+std::vector<Value> MLP::parameters() {
+    std::vector<Value> params;
+    for (auto& layer : layers) {
+        auto layer_params = layer.parameters();
+        params.insert(params.end(), layer_params.begin(), layer_params.end());
+    }
+    return params;
+}
