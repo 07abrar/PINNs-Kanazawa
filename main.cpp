@@ -1,6 +1,5 @@
 #include<iostream>
 #include "dual.h"
-//#include "backprop.h"
 #include "neuralnet.h"
 
 int main() {
@@ -53,6 +52,34 @@ int main() {
     for (const auto& param : mlp.parameters()) {
         std::cout << param << ' ';
     }
+    std::cout << std::endl;
+
+    std::vector<Value> xs = {Value(2.0), Value(3.0)};
+    Value ys = {Value(1.0)};
+
+    // Create a neural network with architecture [2, 2, 1]
+    MLP mlptes({2, 2, 1});
+
+    // Train the neural network
+    for (int k = 0; k < 10; k++) {
+        // Forward pass
+        std::vector<Value> ypred = mlptes(xs);
+
+        Value temp = ypred[0] - ys;
+        Value loss = pow(temp,2);
+
+        // Backward pass
+        mlptes.zeroGradient();
+        loss.backprop();
+
+        // Update weights and biases
+        mlptes.updateParams(0.01);
+
+        std::cout << k << " " << loss.getData() << std::endl;
+    }
+
+    std::vector<Value> yfinal = mlptes(xs);
+    std::cout << yfinal[0].getData();
     std::cout << std::endl;
 
     return 0;

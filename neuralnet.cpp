@@ -57,6 +57,20 @@ Value Neuron::getBias() const{
     return b;
 }
 
+void Neuron::zeroGradient() {
+    for (auto &param : w) {
+        param.setGradient(0.0);
+    }
+    b.setGradient(0.0);
+}
+
+void Neuron::updateParams(double lr) {
+    for (auto &param : w) {
+        param.setData(param.getData() - lr * param.getGradient());
+    }
+    b.setData(b.getData() - lr * b.getGradient());
+}
+
 Layer::Layer(int nin, int nout) {
     for (int i = 0; i < nout; ++i) {
         neurons.emplace_back(Neuron(nin));
@@ -81,6 +95,18 @@ std::vector<Value> Layer::parameters() {
     return params;
 }
 
+void Layer::zeroGradient() {
+    for (auto &neuron : neurons) {
+        neuron.zeroGradient();
+    }
+}
+
+void Layer::updateParams(double lr) {
+    for (auto &neuron : neurons) {
+        neuron.updateParams(lr);
+    }
+}
+
 MLP::MLP(std::vector<int> sizes) {
     for (size_t i = 0; i < sizes.size() - 1; ++i) {
         layers.emplace_back(Layer(sizes[i], sizes[i + 1]));
@@ -102,4 +128,16 @@ std::vector<Value> MLP::parameters() {
         params.insert(params.end(), layer_params.begin(), layer_params.end());
     }
     return params;
+}
+
+void MLP::zeroGradient() {
+    for (auto &layer : layers) {
+        layer.zeroGradient();
+    }
+}
+
+void MLP::updateParams(double lr) {
+    for (auto &layer : layers) {
+        layer.updateParams(lr);
+    }
 }

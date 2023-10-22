@@ -16,6 +16,8 @@ class Neuron{
         std::vector<Value> parameters();
         std::vector<Value> getWeights() const;
         Value getBias() const;
+        void zeroGradient();
+        void updateParams(double lr);
 };
 
 class Layer {
@@ -25,6 +27,8 @@ class Layer {
         Layer(int nin, int nout);
         std::vector<Value> operator()(const std::vector<Value>& x);
         std::vector<Value> parameters();
+        void zeroGradient();
+        void updateParams(double lr);
 };
 
 class MLP {
@@ -34,4 +38,6 @@ class MLP {
         MLP(std::vector<int> sizes);
         std::vector<Value> operator()(const std::vector<Value>& x);
         std::vector<Value> parameters();
+        void zeroGradient();
+        void updateParams(double lr);
 };
