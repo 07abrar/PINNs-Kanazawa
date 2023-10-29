@@ -9,7 +9,7 @@ class Neuron{
     
     public:
         Neuron(int nin);
-        Value operator()(const std::vector<Value>& x);
+        Value operator()(std::vector<Value>& x);
         
         friend std::ostream& operator<<(std::ostream& os, const Neuron& a);
 
@@ -25,7 +25,7 @@ class Layer {
         std::vector<Neuron> neurons;
     public:
         Layer(int nin, int nout);
-        std::vector<Value> operator()(const std::vector<Value>& x);
+        std::vector<Value> operator()(std::vector<Value>& x);
         std::vector<Value> parameters();
         void zeroGradient();
         void updateParams(double lr);
@@ -36,7 +36,7 @@ class MLP {
         std::vector<Layer> layers;
     public:
         MLP(std::vector<int> sizes);
-        std::vector<Value> operator()(const std::vector<Value>& x);
+        std::vector<Value> operator()(std::vector<Value>& x);
         std::vector<Value> parameters();
         void zeroGradient();
         void updateParams(double lr);

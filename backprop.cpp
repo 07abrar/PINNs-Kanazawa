@@ -7,6 +7,7 @@ Value::Value(){
     this->backward = [](){};
 }
 
+
 Value::Value(double data, std::initializer_list<Value*> children, const std::function<void()> &backward){
     this->data = data;
     this->grad = 0.0;
@@ -28,6 +29,12 @@ double Value::getGradient() const{ //This method returns the value of der. The c
 
 double Value::getData() const{
     return data;
+}
+
+void Value::getPrev() const{
+    for (auto prev : this->prev) {
+        std::cout << prev << " - ";
+    }
 }
 
 void Value::backprop(){

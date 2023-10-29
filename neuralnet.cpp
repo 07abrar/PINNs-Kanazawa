@@ -9,17 +9,6 @@ double randomValue(double min, double max){
     return dist(gen);
 }
 
-Value custom_inner_product(const std::vector<Value>& w, const std::vector<Value>& x, const Value& b) {
-    Value sum = b;  // Initialize sum with b
-    for (size_t i = 0; i < w.size(); i++) {
-        Value temp_w = w[i];  // Create a temporary non-const Value
-        Value temp_x = x[i];  // Create a temporary non-const Value
-        Value product = temp_w * temp_x;  // Perform multiplication
-        sum = sum + product;  // Perform addition
-    }
-    return sum;
-}
-
 Neuron::Neuron(int nin) : w(nin) {
     for (int i = 0; i < nin; ++i) {
         w[i] = Value(randomValue(-1.0, 1.0));
@@ -27,9 +16,24 @@ Neuron::Neuron(int nin) : w(nin) {
     b = Value(randomValue(-1.0, 1.0));
 }
 
-Value Neuron::operator()(const std::vector<Value>& x){
-    Value act = custom_inner_product(w, x, b);
-    Value out = tanh(act);
+Value Neuron::operator()(std::vector<Value>& x){
+    std::vector<Value> xw;
+    std::vector<Value> xwxw;
+    for (size_t i = 0; i < x.size(); ++i) {
+        Value dummy = x[i] * w[i];
+        xw.push_back(dummy);
+    }
+    for (size_t i = 0; i < x.size()-1; ++i) {
+        if (i == 0) {
+            Value dummy = xw[i] + xw[i+1];
+            xwxw.push_back(dummy);
+        } else {
+            Value dummy = xwxw[i-1] + xw[i+1];
+            xwxw.push_back(dummy);
+        }
+    }
+    Value xwb = xwxw[xwxw.size()-1] + b;
+    Value out = tanh(xwb);
     return out;
 }
 
@@ -77,7 +81,7 @@ Layer::Layer(int nin, int nout) {
     }
 }
 
-std::vector<Value> Layer::operator()(const std::vector<Value>& x) {
+std::vector<Value> Layer::operator()(std::vector<Value>& x) {
     std::vector<Value> outs;
     for (auto& neuron : neurons) {
         outs.push_back(neuron(x));
@@ -113,7 +117,7 @@ MLP::MLP(std::vector<int> sizes) {
     }
 }
 
-std::vector<Value> MLP::operator()(const std::vector<Value>& x) {
+std::vector<Value> MLP::operator()(std::vector<Value>& x) {
     std::vector<Value> out = x;
     for (auto& layer : layers) {
         out = layer(out);

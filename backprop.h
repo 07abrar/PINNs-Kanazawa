@@ -20,6 +20,7 @@ class Value {
 
         double getGradient() const;
         double getData() const;
+        void getPrev() const;
 
         void backprop();
 
