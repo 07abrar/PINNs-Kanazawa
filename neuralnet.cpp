@@ -14,25 +14,26 @@ Neuron::Neuron(int nin) : w(nin) {
         w[i] = Value(randomValue(-1.0, 1.0));
     }
     b = Value(randomValue(-1.0, 1.0));
+    std::vector<Value> nodeList;
 }
 
 Value Neuron::operator()(std::vector<Value>& x){
-    std::vector<Value> xw;
-    std::vector<Value> xwxw;
+    
     for (size_t i = 0; i < x.size(); ++i) {
         Value dummy = x[i] * w[i];
-        xw.push_back(dummy);
+        nodeList.push_back(dummy);
     }
     for (size_t i = 0; i < x.size()-1; ++i) {
         if (i == 0) {
-            Value dummy = xw[i] + xw[i+1];
-            xwxw.push_back(dummy);
+            Value dummy = nodeList[i] + nodeList[i+1];
+            nodeList.push_back(dummy);
         } else {
-            Value dummy = xwxw[i-1] + xw[i+1];
-            xwxw.push_back(dummy);
+            Value dummy = nodeList[x.size()-1+i] + nodeList[i+1];
+            nodeList.push_back(dummy);
         }
     }
-    Value xwb = xwxw[xwxw.size()-1] + b;
+    Value xwb = nodeList[nodeList.size()-1] + b;
+    nodeList.push_back(xwb);
     Value out = tanh(xwb);
     return out;
 }
@@ -59,6 +60,13 @@ std::vector<Value> Neuron::getWeights() const{
 
 Value Neuron::getBias() const{
     return b;
+}
+
+void Neuron::getXW() const{
+    for (auto x : this->nodeList) {
+        x.getPrev();
+        std::cout << std::endl;
+    }
 }
 
 void Neuron::zeroGradient() {

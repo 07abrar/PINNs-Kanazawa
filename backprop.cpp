@@ -71,8 +71,10 @@ std::ostream& operator<<(std::ostream& os, const Value& a){
 Value operator+(Value& u, Value& v){
     Value out(u.data+v.data, {&u, &v});
     out.backward = [&]() {
+        std::cout << "Before backward of +: u.grad = " << u.grad << ", v.grad = " << v.grad << std::endl;
         u.grad += 1.0 * out.grad;
         v.grad += 1.0 * out.grad;
+        std::cout << "After backward of +: u.grad = " << u.grad << ", v.grad = " << v.grad << std::endl;
     };
     return out;
 }
@@ -89,8 +91,10 @@ Value operator-(Value& u, Value& v){
 Value operator*(Value& u, Value& v){
     Value out(u.data*v.data, {&u, &v});
     out.backward = [&]() {
-        u.grad += v.data*out.grad;
-        v.grad += u.data*out.grad;
+        std::cout << "Before backward of *: u.grad = " << u.grad << ", v.grad = " << v.grad << std::endl;
+        u.grad += v.data * out.grad;
+        v.grad += u.data * out.grad;
+        std::cout << "After backward of *: u.grad = " << u.grad << ", v.grad = " << v.grad << std::endl;
     };
     return out;
 }
@@ -106,7 +110,9 @@ Value pow(Value& d, double p) {
 Value tanh(Value& d) {
     Value out(::tanh(d.data), {&d});
     out.backward = [&]() {
+        std::cout << "Before backward of tanh: d.grad = " << d.grad << std::endl;
         d.grad += (1-::tanh(d.data)*::tanh(d.data))*out.grad;
+        std::cout << "After backward of tanh: d.grad = " << d.grad << std::endl;
     };
     return out;
 }

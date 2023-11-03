@@ -5,67 +5,75 @@
 int main() {
     Value x1(2.0);
     Value x2(3.0);
+    Value x3(4.0);
     Value w1(-0.2);
     Value w2(0.5);
+    Value w3(0.3);
     Value b(-0.3);
 
     Value x1w1 = x1 * w1;
     Value x2w2 = x2 * w2;
+    Value x3w3 = x3 * w3;
     Value x1w1x2w2 = x1w1 + x2w2;
-    Value n = x1w1x2w2 + b;
+    Value x2w2x3w3 = x1w1x2w2 + x3w3;
+    Value n = x2w2x3w3 + b;
     Value o = tanh(n);
 
     o.backprop();
 
-    std::cout << "Gradient with respect to x1: " << x1w1x2w2 << std::endl;
-    std::cout << "Gradient with respect to w1: " << x1w1x2w2.getGradient() << std::endl;
+    std::cout << "Gradient with respect to x1: " << o << std::endl;
+    std::cout << "Gradient with respect to w1: " << x2w2x3w3.getGradient() << std::endl;
 
-    std::vector<Value> x = {Value(2.0), Value(3.0)};
-    std::vector<Value> w = {Value(-0.2), Value(0.5)};
+    std::vector<Value> x = {Value(2.0), Value(3.0), Value(4.0)};
+    std::vector<Value> w = {Value(-0.2), Value(0.5), Value(0.3)};
     Value b2 = Value(-0.3);
-    std::vector<Value> xw = {x[0] * w[0], x[1] * w[1]};
+    /*
+    std::vector<Value> xw = {x[0] * w[0], x[1] * w[1], x[2] * w[2]};
     std::vector<Value> xwxw = {xw[0] + xw[1]};
-    Value xwb = xwxw[0] + b2;
+    Value dungdung = xwxw[0] + xw[2];
+    xwxw.push_back(dungdung);
+    Value xwb = xwxw[1] + b2;
     Value out2 = tanh(xwb);
     std::cout << "mem address: " << &xw[1] << std::endl;
     std::cout << "parent node: " << std::endl;
     xwxw[0].getPrev();
     std::cout << std::endl;
-    out2.backprop();
-    std::cout << "mem address: " << &xwxw[0] << std::endl;
+    std::cout << "mem address: " << &xw[0] << std::endl;
     std::cout << "tes1: " << xwxw[0] << std::endl;
+    out2.backprop();
     std::cout << "tes2: " << xwxw[0].getGradient() << std::endl;
-
-    std::vector<Value> xw2;
-    std::vector<Value> xwxw2;
+    */
+    std::vector<Value> nodeList;
+    nodeList.reserve(x.size()*2);
     for (size_t i = 0; i < x.size(); ++i) {
-        Value dummy = x[i] * w[i];
-        xw2.push_back(dummy);
+        nodeList.emplace_back(x[i] * w[i]);
     }
     for (size_t i = 0; i < x.size()-1; ++i) {
         if (i == 0) {
-            Value dummy = xw2[i] + xw2[i+1];
-            xwxw2.push_back(dummy);
+            nodeList.emplace_back(nodeList[i] + nodeList[i + 1]);
         } else {
-            Value dummy = xwxw2[i-1] + xw2[i+1];
-            xwxw2.push_back(dummy);
+            nodeList.emplace_back(nodeList[x.size() + i - 1] + nodeList[i + 1]);
         }
     }
-    Value xwb2 = xwxw2[xwxw2.size()-1] + b2;
-    Value out3 = tanh(xwb2);
+    nodeList.emplace_back(nodeList.back() + b);
+    Value out3 = tanh(nodeList.back());
+    std::cout << "testes1: " << out3 << std::endl;
+    nodeList[3].getPrev();
     out3.backprop();
-    std::cout << "testes1: " << xwxw2[0] << std::endl;
-    std::cout << "testes2: " << xwxw2[0].getGradient() << std::endl;
+    std::cout << "testes2: " << out3.getGradient() << std::endl;
 
-    int nin = 2;
+    int nin = 3;
     Neuron neuron(nin);
-    std::vector<Value> inputs = {Value(2.0), Value(3.0)};
+    std::vector<Value> inputs = {Value(2.0), Value(3.0), Value(4.0)};
     Value output = neuron(inputs);
     std::cout << "Output: " << output << std::endl;
     std::cout << "Neuron Parameters: " << neuron << std::endl;
+    std::cout << "Get xw: " << std::endl;
+    neuron.getXW();
+    std::cout << std::endl;
     output.backprop();
-    std::cout << "Gradient with respect to neuron: " << inputs[0].getGradient() << std::endl;
-    std::cout << "Gradient with respect to neuron: " << inputs[1].getGradient() << std::endl;
+    std::cout << "inputs[0]: " << inputs[0] << std::endl;
+    std::cout << "inputs[0].gradient: " << inputs[0].getGradient() << std::endl;
 
     int nout = 2;
     Layer layer(nin, nout);
@@ -95,7 +103,7 @@ int main() {
     std::cout << std::endl;
 
     std::vector<Value> xs = {Value(2.0), Value(3.0)};
-    Value ys = {Value(1.0)};
+    Value ys = {Value(3.0)};
 
     // Create a neural network with architecture [2, 2, 1]
     MLP mlptes({2, 2, 1});
@@ -115,7 +123,7 @@ int main() {
         // Update weights and biases
         mlptes.updateParams(0.01);
 
-        std::cout << k << " " << loss.getData() << std::endl;
+        std::cout << k << " " << loss.getData() << " " << ypred[0] << std::endl;
     }
 
     std::vector<Value> yfinal = mlptes(xs);

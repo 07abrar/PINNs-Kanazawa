@@ -6,6 +6,7 @@ class Neuron{
     private:
         std::vector<Value> w;
         Value b;
+        std::vector<Value> nodeList;
     
     public:
         Neuron(int nin);
@@ -16,6 +17,7 @@ class Neuron{
         std::vector<Value> parameters();
         std::vector<Value> getWeights() const;
         Value getBias() const;
+        void getXW() const;
         void zeroGradient();
         void updateParams(double lr);
 };
