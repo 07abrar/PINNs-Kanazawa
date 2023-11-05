@@ -42,7 +42,7 @@ void Value::backprop(){
     std::set<Value*> visited;
 
     std::function<void(Value*)> build_topo = [&](Value* v) {
-        if (visited.find(v) == visited.end()) {
+        if (visited.find(v) == visited.end()) { // if v is not in visited
             visited.insert(v);
             for (auto child : v->prev) {
                 build_topo(child);
@@ -57,7 +57,7 @@ void Value::backprop(){
     this->grad = 1.0;
 
     // Backpropagation
-    for (auto it = topo.rbegin(); it != topo.rend(); ++it) {
+    for (auto it = topo.rbegin(); it != topo.rend(); ++it) { // rbegin() returns a reverse iterator pointing to the last element in the vector (reverse beginning). rend() returns a reverse iterator pointing to the theoretical element preceding the first element in the vector (considered as reverse end).
         (*it)->backward();
     }
 }

@@ -1,4 +1,5 @@
 #include<iostream>
+#include <memory>
 #include "dual.h"
 #include "neuralnet.h"
 
@@ -56,11 +57,16 @@ int main() {
         }
     }
     nodeList.emplace_back(nodeList.back() + b);
-    Value out3 = tanh(nodeList.back());
-    std::cout << "testes1: " << out3 << std::endl;
+    nodeList.emplace_back(tanh(nodeList.back()));
+    std::cout << "testes1: " << nodeList.back() << std::endl;
+    //Value out3 = tanh(nodeList.back());
+    //std::cout << "testes1: " << out3 << std::endl;
     nodeList[3].getPrev();
-    out3.backprop();
-    std::cout << "testes2: " << out3.getGradient() << std::endl;
+    std::cout << std::endl;
+    nodeList.back().backprop();
+    //out3.backprop();
+    //std::cout << "testes2: " << out3.getGradient() << std::endl;
+    std::cout << "testes3: " << nodeList[3].getGradient() << std::endl;
 
     int nin = 3;
     Neuron neuron(nin);
