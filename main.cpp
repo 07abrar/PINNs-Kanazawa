@@ -80,7 +80,7 @@ int main() {
     output.backprop();
     std::cout << "inputs[0]: " << inputs[0] << std::endl;
     std::cout << "inputs[0].gradient: " << inputs[0].getGradient() << std::endl;
-
+ //hai
     int nout = 2;
     Layer layer(nin, nout);
     std::vector<Value> layer_output = layer(inputs);
